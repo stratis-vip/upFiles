@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const multer = require("multer");
-const cors = require("cors");
 const Loki = require("lokijs");
 const utils_1 = require("./utils");
 // setup
@@ -21,10 +20,24 @@ const upload = multer({ dest: `${UPLOAD_PATH}/`, fileFilter: utils_1.imageFilter
 const db = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
 // app
 const app = express();
-app.use(cors());
+//app.use(cors());
+app.all('/*', function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+});
 app.listen(3000, function () {
     console.log('listening on port 3000!');
 });
+app.get('/images', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    try {
+        const col = yield utils_1.loadCollection(COLLECTION_NAME, db);
+        res.send(col.data);
+    }
+    catch (err) {
+        res.sendStatus(400);
+    }
+}));
 app.post('/profile', upload.single('avatar'), (req, res) => __awaiter(this, void 0, void 0, function* () {
     try {
         const col = yield utils_1.loadCollection(COLLECTION_NAME, db);

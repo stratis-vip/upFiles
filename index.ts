@@ -18,8 +18,12 @@ const db = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
 
 // app
 const app = express();
-app.use(cors());
-
+//app.use(cors());
+app.all('/*', function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+});
 app.listen(3000, function () {
     console.log('listening on port 3000!');
 });
