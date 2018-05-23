@@ -24,6 +24,15 @@ app.listen(3000, function () {
     console.log('listening on port 3000!');
 });
 
+app.get('/images', async (req, res) => {
+    try {
+        const col = await loadCollection(COLLECTION_NAME, db);
+        res.send(col.data);
+    } catch (err) {
+        res.sendStatus(400);
+    }
+})
+
 app.post('/profile', upload.single('avatar'), async (req, res) => {
     try {
         const col = await loadCollection(COLLECTION_NAME, db);
